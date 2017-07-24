@@ -159,12 +159,12 @@ export default {
     var ration;
     if (scrollEventTarget === element) {
       shouldTrigger = scrollEventTarget.scrollHeight - viewportBottom <= distance;
-      ration = viewportBottom / scrollEventTarget.scrollHeight;
+      ration = (viewportBottom + distance) / scrollEventTarget.scrollHeight;
     } else {
       var elementBottom = getElementTop(element) - getElementTop(scrollEventTarget) + element.offsetHeight + viewportScrollTop;
 
       shouldTrigger = viewportBottom + distance >= elementBottom;
-      ration = viewportBottom / elementBottom;
+      ration = (viewportBottom + distance) / elementBottom;
     }
     
     this.scrollCustomListener && this.scrollCustomListener(ration);
