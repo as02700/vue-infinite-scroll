@@ -137,6 +137,13 @@ export default {
         directive.doCheck();
       });
     }
+    
+    var scrollExpr = element.getAttribute('infinite-scroll-listener');
+    if (scrollExpr) {
+      var listener = directive.vm.$get(scrollExpr);
+      var isFunc = typeof listener === 'function';
+      isFunc && (directive.scrollCustomListener = listener);
+    }
   },
 
   doCheck: function (force) {
@@ -149,14 +156,18 @@ export default {
     var viewportBottom = viewportScrollTop + getVisibleHeight(scrollEventTarget);
 
     var shouldTrigger = false;
-
+    var ration;
     if (scrollEventTarget === element) {
       shouldTrigger = scrollEventTarget.scrollHeight - viewportBottom <= distance;
+      ration = viewportBottom / scrollEventTarget.scrollHeight;
     } else {
       var elementBottom = getElementTop(element) - getElementTop(scrollEventTarget) + element.offsetHeight + viewportScrollTop;
 
       shouldTrigger = viewportBottom + distance >= elementBottom;
+      ration = viewportBottom / elementBottom;
     }
+    
+    this.scrollCustomListener && this.scrollCustomListener(ration);
 
     if (shouldTrigger && this.expression) {
       this.vm.$get(this.expression);
